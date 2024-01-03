@@ -14,7 +14,7 @@ class DBHelper{
     
     init(){
         db = self.openDatabase()
-//        self.createEmployeeTable()
+        self.createEmployeeTable()
     }
     
     func openDatabase()->OpaquePointer?{
@@ -36,8 +36,56 @@ class DBHelper{
         return db
     }
     
-//    func createEmployeeTable(){
+    func createEmployeeTable(){
+        let createQueryString = "CREATE TABLE IF NOT EXISTS Employee(empId INTEGER,empName Text);"
+        var createStatement : OpaquePointer?
+        
+        if sqlite3_prepare_v2(
+            db,
+            createQueryString,
+            -1,
+            &createStatement,
+            nil) == SQLITE_OK{
+            
+            if sqlite3_step(createStatement) == SQLITE_DONE{
+                print("Employee Table created successfully")
+                print(createStatement as Any)
+            } else {
+                print("Employee Table creation has failed")
+            }
+        } else {
+            print("The query statement preparation has failed")
+        }
+        sqlite3_finalize(createStatement)
+    }
+    
+    func insertAnEmployeeRecord(empId : Int, empName : String){
+        let insertQueryString = "INSERT INTO Employee(empId,empName) VALUES(?,?);"
+        var insertStatement : OpaquePointer?
+        if sqlite3_prepare_v2(
+            db,
+            insertQueryString,
+            -1,
+            &insertStatement,
+            nil) == SQLITE_OK{
+            if sqlite3_step(insertStatement) == SQLITE_DONE{
+                sqlite3_bind_int(insertStatement,0, Int32(empId))
+                sqlite3_bind_text(insertStatement,
+                                  1,
+                                  (empName as NSString).utf8String,
+                                  -1,
+                                  nil)
+            }else{
+                print("Employee Record successfully inserted")
+            }
+        }else{
+            print("Insert Statement Preparation has failed")
+        }
+        
+        sqlite3_finalize(insertStatement)
+    }
+    
+//    func deleteAnEmployeeRecord(){
 //
 //    }
-    
 }

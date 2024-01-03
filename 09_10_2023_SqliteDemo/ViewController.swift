@@ -12,5 +12,6 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
        var dbHelper = DBHelper()
+        dbHelper.insertAnEmployeeRecord(empId: 11, empName: "Gajanan")
     }
 }
